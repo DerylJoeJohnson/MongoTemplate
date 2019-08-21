@@ -14,6 +14,18 @@ mongoose.connect(url,function(err)
     else
         console.log("DB Connected!");
 })
+var multer = require('multer'); //module to upload files
+
+var storage =   multer.diskStorage({  
+    destination: (req, file, callback)=>{  
+      callback(null, './public/images');  
+    },  
+    filename: (req, file, callback)=>{  
+      callback(null, file.originalname);  
+    }  
+  });  
+  
+var upload = multer({ storage : storage}).single('bimage');  
 
 /*var barray=[
     {
@@ -51,8 +63,15 @@ router.get('/',function(req,res){
         if(err)
         throw err;
         else
-        res.render('books',{pageTitle:"Library",nav:[{link:"/book",title:"Books"},{link:"/author",title:"AUTHOR"}],bk:result});
+        res.render('books',{pageTitle:"Library",nav:[{link:"/book",title:"Books"},{link:"/author",title:"AUTHOR"},{link:"/book/newbook",title:"ADD Books"}],bk:result});
 });
+    })
+    router.get('/newbook',function(res,req){
+        res.render('newbook',{pageTitle:"Library",
+        nav:[{link:"/book",title:"Books"},
+        {link:"/author",title:"AUTHOR"},
+        {link:"/book/newbook",title:"ADD Books"}
+        ]});
     })
     
 router.get("/:id",function(req,res){

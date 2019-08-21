@@ -1,6 +1,21 @@
 var exp=require('express')
+
+var mongoose = require("mongoose");
+var bodyparser = require("body-parser");
+var url="mongodb://localhost/library"
+
+var author=require("../model/author")
 const router=exp.Router();
-var barray=[
+router.use(bodyparser.urlencoded({extended:true}))
+
+mongoose.connect(url,function(err)
+{
+    if(err)
+    throw err;
+    else
+        console.log("DB2 Connected!");
+})
+/*var barray=[
     {
         title1:"War And Peace",
         genre:"Historical Fiction",
@@ -28,20 +43,30 @@ var barray=[
         author:"J K Rowling",
         img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTM_EHmQlzsOO3R9mR1V_5yRlTi6kuHjE5rDWJ8jnLCoj8rWZ5e",
         des:"Very good author"
-    }];
+    }];*/
 //app.get('/author',function(req,res){
     //res.send("Higly Confidential")
   //  res.render('authors',{pageTitle:"Library",nav:[{link:"/book",title:"Books"},{link:"/author",title:"AUTHOR"}],bk:barray});
 //})
 router.get('/',function(req,res){
-    res.render('authors',{pageTitle:"Library",nav:[{link:"/book",title:"Books"},{link:"/author",title:"AUTHOR"}],bk:barray});
+    author.find({},function(err,result){
+    if(err)
+    throw err;
+    else
+    res.render('authors',{pageTitle:"Library",nav:[{link:"/book",title:"Books"},{link:"/author",title:"AUTHOR"},{link:"/book/newbook",title:"Add Books"}],bk:result});
+})
 });
 router.get("/:id",function(req,res){
-    var id=req.params.id
-    console.log(id)
-    console.log(barray[id].title1)
+    var id=req.params.id;
+  //  console.log(id)
+   // console.log(barray[id].title1)
+    author.find({},function(err,result){
+        if(err)
+        throw err;
+        else
 
     
-    res.render("singleauthor",{pageTitle:"Library",nav:[{link:"/book",title:"Books"},{link:"/author",title:"AUTHOR"}],bk:barray[id]});
+    res.render("singleauthor",{pageTitle:"Library",nav:[{link:"/book",title:"Books"},{link:"/author",title:"AUTHOR"}],bk:result[id]});
 })
+});
 module.exports=router;
